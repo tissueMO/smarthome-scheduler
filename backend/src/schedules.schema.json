@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "default": {},
+  "title": "Root Schema",
+  "required": [
+    "jobs",
+    "reservations"
+  ],
+  "properties": {
+    "jobs": {
+      "type": "array",
+      "default": [],
+      "title": "The jobs Schema",
+      "items": {
+        "type": "object",
+        "default": {},
+        "title": "A Schema",
+        "required": [
+          "cronExpression",
+          "url"
+        ],
+        "properties": {
+          "cronExpression": {
+            "type": "string",
+            "default": "",
+            "title": "The cronExpression Schema",
+            "examples": [
+              "* * * * * *"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "default": "",
+            "title": "The url Schema",
+            "examples": [
+              "https://example.com/"
+            ]
+          }
+        },
+        "examples": [
+          {
+            "cronExpression": "* * * * * *",
+            "url": "https://example.com/"
+          }
+        ]
+      },
+      "examples": [
+        [
+          {
+            "cronExpression": "* * * * * *",
+            "url": "https://example.com/"
+          }
+        ]
+      ]
+    },
+    "reservations": {
+      "type": "array",
+      "default": [],
+      "title": "The reservations Schema",
+      "items": {
+        "type": "object",
+        "title": "A Schema",
+        "required": [
+          "type",
+          "options"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "The type Schema",
+            "examples": [
+              "silent"
+            ]
+          },
+          "options": {
+            "type": "object",
+            "title": "The options Schema",
+            "required": [
+              "start",
+              "end",
+              "target"
+            ],
+            "properties": {
+              "start": {
+                "type": "string",
+                "title": "The start Schema",
+                "examples": [
+                  "2022-01-01T00:00:00"
+                ]
+              },
+              "end": {
+                "type": "string",
+                "title": "The end Schema",
+                "examples": [
+                  "2022-01-02T00:00:00"
+                ]
+              },
+              "target": {
+                "type": "string",
+                "title": "The target Schema",
+                "examples": [
+                  "*",
+                  "https://example.com/"
+                ]
+              }
+            },
+            "examples": [
+              {
+                "start": "2022-01-01T00:00:00",
+                "end": "2022-01-02T00:00:00",
+                "target": "*"
+              },
+              {
+                "start": "2022-01-01T00:00:00",
+                "end": "2022-01-02T00:00:00",
+                "target": "https://example.com/"
+              }
+            ]
+          }
+        },
+        "examples": [
+          {
+            "type": "silent",
+            "options": {
+              "start": "2022-01-01T00:00:00",
+              "end": "2022-01-02T00:00:00",
+              "target": "*"
+            }
+          },
+          {
+            "type": "silent",
+            "options": {
+              "start": "2022-01-01T00:00:00",
+              "end": "2022-01-02T00:00:00",
+              "target": "https://example.com/"
+            }
+          }
+        ]
+      },
+      "examples": [
+        [
+          {
+            "type": "silent",
+            "options": {
+              "start": "2022-01-01T00:00:00",
+              "end": "2022-01-02T00:00:00",
+              "target": "*"
+            }
+          },
+          {
+            "type": "silent",
+            "options": {
+              "start": "2022-01-01T00:00:00",
+              "end": "2022-01-02T00:00:00",
+              "target": "https://example.com/"
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "examples": [
+    {
+      "jobs": [
+        {
+          "cronExpression": "* * * * * *",
+          "url": "https://example.com/"
+        }
+      ],
+      "reservations": [
+        {
+          "type": "silent",
+          "options": {
+            "start": "2022-01-01T00:00:00",
+            "end": "2022-01-02T00:00:00",
+            "target": "*"
+          }
+        },
+        {
+          "type": "silent",
+          "options": {
+            "start": "2022-01-01T00:00:00",
+            "end": "2022-01-02T00:00:00",
+            "target": "https://example.com/"
+          }
+        }
+      ]
+    }
+  ]
+}
