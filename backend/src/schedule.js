@@ -45,7 +45,7 @@ class JobScheduler {
     const silentReservations = reservations
       .filter(reservation => reservation.type === 'silent')
       .map(({ options }, i) => {
-        console.info(`サイレント予約#${i + 1} ${options.start}...${options.end} >>> ${options.target}`);
+        console.info(`サイレント予約#${i + 1} [${options.target}] ${options.start}...${options.end}`);
         return options;
       })
       .map(options => ({
@@ -56,12 +56,12 @@ class JobScheduler {
 
     jobs
       .map((job, i) => {
-        console.info(`ジョブ#${i + 1} [${job.cronExpression}] >>> ${job.url}`);
+        console.info(`ジョブ#${i + 1} [${job.title}] ${job.cronExpression}`);
         return job;
       })
-      .map(({ cronExpression, url }, i) => new CronJob(`0 ${cronExpression}`, async () => {
-        if (!this.#includesInReservations(silentReservations, url)) {
-          console.info(`ジョブ#${i + 1} 実行`);
+      .map(({ cronExpression, url, title }, i) => new CronJob(`0 ${cronExpression}`, async () => {
+        if (!this.#includesInReservations(silentReservations, title)) {
+          console.info(`ジョブ#${i + 1} トリガー`);
           await axios.post(url, {}, { headers: { 'Content-Type': 'application/json' }});
         } else {
           console.info(`ジョブ#${i + 1} スキップ`);
@@ -88,14 +88,14 @@ class JobScheduler {
     }
   }
 
-  #includesInReservations(reservations, url) {
+  #includesInReservations(reservations, title) {
     const now = new Date();
     return reservations.some(
       reservation => reservation.start <= now &&
       now <= reservation.end &&
       (
         reservation.target === '*' ||
-        reservation.target === url
+        reservation.target === title
       )
     );
   }

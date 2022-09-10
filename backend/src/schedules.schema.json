@@ -19,7 +19,8 @@
         "title": "A Schema",
         "required": [
           "cronExpression",
-          "url"
+          "url",
+          "title"
         ],
         "properties": {
           "cronExpression": {
@@ -37,12 +38,21 @@
             "examples": [
               "https://example.com/"
             ]
+          },
+          "title": {
+            "type": "string",
+            "default": "",
+            "title": "The title Schema",
+            "examples": [
+              "LivingRoomLight-ON"
+            ]
           }
         },
         "examples": [
           {
             "cronExpression": "* * * * * *",
-            "url": "https://example.com/"
+            "url": "https://example.com/",
+            "title": "LivingRoomLight-ON"
           }
         ]
       },
@@ -50,7 +60,8 @@
         [
           {
             "cronExpression": "* * * * * *",
-            "url": "https://example.com/"
+            "url": "https://example.com/",
+            "title": "LivingRoomLight-ON"
           }
         ]
       ]
@@ -102,7 +113,7 @@
                 "title": "The target Schema",
                 "examples": [
                   "*",
-                  "https://example.com/"
+                  "LivingRoomLight-ON"
                 ]
               }
             },
@@ -115,7 +126,7 @@
               {
                 "start": "2022-01-01T00:00:00",
                 "end": "2022-01-02T00:00:00",
-                "target": "https://example.com/"
+                "target": "LivingRoomLight-ON"
               }
             ]
           }
@@ -134,7 +145,7 @@
             "options": {
               "start": "2022-01-01T00:00:00",
               "end": "2022-01-02T00:00:00",
-              "target": "https://example.com/"
+              "target": "LivingRoomLight-ON"
             }
           }
         ]
@@ -154,7 +165,7 @@
             "options": {
               "start": "2022-01-01T00:00:00",
               "end": "2022-01-02T00:00:00",
-              "target": "https://example.com/"
+              "target": "LivingRoomLight-ON"
             }
           }
         ]
@@ -183,7 +194,7 @@
           "options": {
             "start": "2022-01-01T00:00:00",
             "end": "2022-01-02T00:00:00",
-            "target": "https://example.com/"
+            "target": "LivingRoomLight-ON"
           }
         }
       ]
