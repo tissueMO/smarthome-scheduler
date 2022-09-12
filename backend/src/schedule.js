@@ -19,7 +19,7 @@ class JobScheduler {
     try {
       this.#option = JSON.parse(await fs.readFile(`${process.env.SCHEDULES_PATH}/schedules.json`));
     } catch (e) {
-      console.warn('スケジュール設定が存在しません。', e);
+      console.warn('スケジュール設定が存在しないためデフォルト設定を使用します。', e);
       this.#option = {
         jobs: [],
         reservations: [],
@@ -76,6 +76,10 @@ class JobScheduler {
   }
 
   get schedules() {
+    // 過去の予約を破棄
+    const now = new Date();
+    this.#option.reservations = this.#option.reservations.filter(reservation => now < reservation.end);
+
     return this.#option;
   }
 
