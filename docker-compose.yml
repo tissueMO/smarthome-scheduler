@@ -1,7 +1,12 @@
 version: '3'
 services:
-  # frontend:
-  #   build: frontend
+  frontend:
+    build: frontend
+    tty: true
+    ports:
+      - 8080:3000
+    volumes:
+      - ./frontend/src:/app
   backend:
     build: backend
     tty: true

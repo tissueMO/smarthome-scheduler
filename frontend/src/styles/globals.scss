@@ -1,0 +1,49 @@
+@import "_variables";
+@import "@coreui/coreui/scss/coreui";
+
+* {
+  font-family: Noto Sans JP, Hiragino Kaku Gothic ProN, ヒラギノ角ゴ ProN W3, Meiryo, メイリオ, sans-serif;
+}
+
+body {
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #23282c;
+  text-align: left;
+  background-color: #e4e5e6;
+  overflow-x: hidden;
+}
+
+button {
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.app {
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    .app-header {
+      .breadcrumb {
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    .app-body {
+      display: flex;
+      flex-direction: row;
+      flex-grow: 1;
+      overflow-x: hidden;
+
+      .main {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+}
