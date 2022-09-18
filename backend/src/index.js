@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const dayjs = require('dayjs');
 const { JobScheduler } = require('./schedule');
 
@@ -15,6 +16,7 @@ const timeFormat = 'YYYY-MM-DDTHH:mm';
 express()
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
+  .use(cors())
   .get('/schedules', (_, res) => {
     res.json(scheduler.schedules);
   })
@@ -22,16 +24,14 @@ express()
     try {
       scheduler.schedules = req.body;
     } catch (e) {
-      res
-        .status(400)
-        .json({ message: e.message });
+      res.status(400).json({ message: e.message });
       return;
     }
 
     await scheduler.save();
     await scheduler.start();
 
-    res.sendStatus(201);
+    res.json(scheduler.schedules);
   })
   .post('/schedules/reservations', async (req, res) => {
     // Slack からのリクエストのみ受理
@@ -41,15 +41,12 @@ express()
     }
 
     // リクエストバリデーション
-    const [ rawStart = '', rawEnd = '', type = 'silent', target = '*' ] = req.body.text
+    const [rawStart = '', rawEnd = '', type = 'silent', target = '*'] = req.body.text
       .split(' ')
-      .filter(t => t.length !== 0);
+      .filter((t) => t.length !== 0);
     const start = new Date(rawStart);
     const end = new Date(rawEnd);
-    if (
-      Number.isNaN(start.valueOf()) ||
-      Number.isNaN(end.valueOf())
-    ) {
+    if (Number.isNaN(start.valueOf()) || Number.isNaN(end.valueOf())) {
       res.sendStatus(400);
       return;
     }
@@ -72,7 +69,7 @@ express()
     const { user_id: userId, response_url: responseUrl } = req.body;
     await axios.post(responseUrl, {
       response_type: 'in_channel',
-      text: `<@${userId}> さんが ${reservationName} [${target}] (${formatStart}...${formatEnd}) を追加しました。`
+      text: `<@${userId}> さんが ${reservationName} [${target}] (${formatStart}...${formatEnd}) を追加しました。`,
     });
 
     res.sendStatus(200);
