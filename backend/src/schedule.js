@@ -3,6 +3,7 @@ const axios = require('axios').default;
 const { validate } = require('jsonschema');
 const { CronJob } = require('cron');
 const schema = require('./schedules.schema');
+const holidayJp = require('@holiday-jp/holiday_jp');
 
 class JobScheduler {
   /**
@@ -59,21 +60,33 @@ class JobScheduler {
         console.info(`ジョブ#${i + 1} [${job.title}] ${job.cronExpression}`);
         return job;
       })
-      .map(
-        ({ cronExpression, url, title }, i) =>
-          new CronJob(`0 ${cronExpression}`, async () => {
-            if (!this.#includesInReservations(silentReservations, title)) {
-              console.info(`ジョブ#${i + 1} [${title}] トリガー`);
-              try {
-                await axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
-              } catch (e) {
-                console.error(`POST失敗: ${e.response?.status}`);
-              }
-            } else {
-              console.info(`ジョブ#${i + 1} [${title}] スキップ`);
-            }
-          }),
-      )
+      .map(({ cronExpression, url, title }, i) => {
+        const hasHolidayCondition = cronExpression.match(/\$$/g) !== null;
+        const hasNotHolidayCondition = cronExpression.match(/#$/g) !== null;
+        cronExpression = '20 ' + cronExpression.replace('$', '*').replace('#', '*');
+
+        return new CronJob(cronExpression, async () => {
+          if (hasHolidayCondition && !this.#isHoliday()) {
+            console.info(`ジョブ#${i + 1} [${title}] スキップ (土日祝制約)`);
+            return;
+          }
+          if (hasNotHolidayCondition && this.#isHoliday()) {
+            console.info(`ジョブ#${i + 1} [${title}] スキップ (平日制約)`);
+            return;
+          }
+          if (this.#containsInSilentReservations(silentReservations, title)) {
+            console.info(`ジョブ#${i + 1} [${title}] スキップ (サイレント予約)`);
+            return;
+          }
+
+          console.info(`ジョブ#${i + 1} [${title}] トリガー`);
+          try {
+            await axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
+          } catch (e) {
+            console.error(`POST失敗: ${e.response?.status}`);
+          }
+        });
+      })
       .forEach((job) => {
         this.#jobs.push(job);
         job.start();
@@ -101,7 +114,7 @@ class JobScheduler {
     }
   }
 
-  #includesInReservations(reservations, title) {
+  #containsInSilentReservations(reservations, title) {
     const now = new Date();
     return reservations.some(
       (reservation) =>
@@ -109,6 +122,11 @@ class JobScheduler {
         now <= reservation.end &&
         (reservation.target === '*' || reservation.target === title),
     );
+  }
+
+  #isHoliday(date = null) {
+    const d = date ?? new Date();
+    return [0, 6].includes(d.getDay()) || holidayJp.isHoliday(d);
   }
 }
 

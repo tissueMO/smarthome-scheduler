@@ -478,7 +478,7 @@ export default function Home() {
                   <CFormInput
                     value={cronEditorDayOfWeeks}
                     type='text'
-                    placeholder='0-6 (日曜日-土曜日)'
+                    placeholder='0-6 (日曜日-土曜日), $=土日祝, #=土日祝以外'
                     onInput={(e) => setCronEditorDayOfWeeks(e.target.value)}
                   />
                 </CCol>
