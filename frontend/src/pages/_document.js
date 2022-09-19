@@ -1,5 +1,6 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 
+// NOTE: 全体の文書構造を定義する。サーバーサイドでレンダリングされる。
 export default function Document() {
   return (
     <Html>

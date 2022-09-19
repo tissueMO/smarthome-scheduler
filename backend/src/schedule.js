@@ -106,12 +106,15 @@ class JobScheduler {
   }
 
   set schedules(schedules) {
-    const validation = validate(schedules, schema);
-    if (validation.valid) {
-      this.#option = schedules;
-    } else {
-      throw new Error(JSON.stringify(validation.errors));
+    const { valid, errors } = validate(schedules, schema);
+    if (!valid) {
+      throw new Error(JSON.stringify(errors));
     }
+
+    // 予約時間順にソート
+    schedules.reservations.sort((a, b) => new Date(a.options.start) - new Date(b.options.start));
+
+    this.#option = schedules;
   }
 
   #containsInSilentReservations(reservations, title) {

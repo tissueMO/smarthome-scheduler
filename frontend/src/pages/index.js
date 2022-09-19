@@ -44,7 +44,7 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export default function Home() {
+export default function TopPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [jobs, setJobs] = useState([]);
   const [reservations, setReservations] = useState([]);
@@ -194,7 +194,7 @@ export default function Home() {
                                     アクション URL
                                   </CTableHeaderCell>
                                   <CTableHeaderCell scope='col' className='p-2'>
-                                    {/* 削除ボタン列 */}
+                                    {/* 操作ボタン列 */}
                                   </CTableHeaderCell>
                                 </CTableRow>
                               </CTableHead>
@@ -248,7 +248,7 @@ export default function Home() {
                                         }
                                       />
                                     </CTableDataCell>
-                                    <CTableDataCell>
+                                    <CTableDataCell className='text-nowrap'>
                                       <CButton
                                         variant='outline'
                                         color='danger'
@@ -256,6 +256,31 @@ export default function Home() {
                                         onClick={() => setJobs(jobs.filter((_, j) => i !== j))}
                                       >
                                         <FontAwesomeIcon icon={fasIcon.faTrashAlt} />
+                                      </CButton>
+                                      <CButton
+                                        className='ms-2'
+                                        variant='outline'
+                                        color='dark'
+                                        shape='rounded-pill'
+                                        onClick={() => {
+                                          jobs.splice(i - 1, 2, jobs[i], jobs[i - 1]);
+                                          setJobs([...jobs]);
+                                        }}
+                                        disabled={i === 0}
+                                      >
+                                        <FontAwesomeIcon icon={fasIcon.faArrowUp} />
+                                      </CButton>
+                                      <CButton
+                                        variant='outline'
+                                        color='dark'
+                                        shape='rounded-pill'
+                                        onClick={() => {
+                                          jobs.splice(i, 2, jobs[i + 1], jobs[i]);
+                                          setJobs([...jobs]);
+                                        }}
+                                        disabled={i === jobs.length - 1}
+                                      >
+                                        <FontAwesomeIcon icon={fasIcon.faArrowDown} />
                                       </CButton>
                                     </CTableDataCell>
                                   </CTableRow>
@@ -304,7 +329,7 @@ export default function Home() {
                                     対象
                                   </CTableHeaderCell>
                                   <CTableHeaderCell scope='col' className='p-2'>
-                                    {/* 削除ボタン列 */}
+                                    {/* 操作ボタン列 */}
                                   </CTableHeaderCell>
                                 </CTableRow>
                               </CTableHead>
