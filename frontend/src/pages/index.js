@@ -61,7 +61,7 @@ export default function TopPage() {
   // スケジュール取得
   useEffect(() => {
     (async () => {
-      const { data, status } = await axios.get('http://localhost:3000/schedules');
+      const { data, status } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/schedules`);
       if (status === 200) {
         setJobs(data.jobs);
         setReservations(
@@ -80,7 +80,7 @@ export default function TopPage() {
   const updateSchedules = async () => {
     try {
       const { data: data } = await axios.put(
-        'http://localhost:3000/schedules',
+        `${process.env.NEXT_PUBLIC_API_URL}/schedules`,
         {
           jobs: jobs.map((j) => ({
             title: j.title,
@@ -517,7 +517,6 @@ export default function TopPage() {
                 color='primary'
                 className='w-25'
                 onClick={() => {
-                  console.log(cronEditorMinutes);
                   const cronExpression = [
                     cronEditorMinutes,
                     cronEditorHours,
