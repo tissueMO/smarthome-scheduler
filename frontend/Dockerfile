@@ -16,7 +16,6 @@ CMD ["yarn", "dev"]
 
 # ビルドステージ
 FROM development AS build
-ARG NEXT_PUBLIC_API_URL=http://localhost:3000
 COPY src .
 RUN --mount=type=secret,id=SECRETS . /var/run/secrets && \
   yarn install && \
