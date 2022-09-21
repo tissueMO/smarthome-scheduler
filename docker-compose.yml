@@ -1,7 +1,9 @@
 version: '3'
 services:
   frontend:
-    build: frontend
+    build:
+      context: frontend
+      target: development
     tty: true
     ports:
       - 8080:3000
@@ -10,7 +12,9 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:3000
   backend:
-    build: backend
+    build:
+      context: backend
+      target: development
     tty: true
     ports:
       - 3000:3000

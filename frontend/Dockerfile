@@ -10,7 +10,6 @@ ENTRYPOINT ["/tini", "--"]
 
 USER node
 WORKDIR /app
-
 EXPOSE 3000
 
 CMD ["yarn", "dev"]
@@ -19,8 +18,9 @@ CMD ["yarn", "dev"]
 FROM development AS build
 ARG NEXT_PUBLIC_API_URL=http://localhost:3000
 COPY src .
-RUN yarn install
-RUN yarn generate
+RUN --mount=type=secret,id=SECRETS . /var/run/secrets && \
+  yarn install && \
+  yarn generate
 
 # 本番ステージ
 FROM httpd:2 AS production

@@ -1,4 +1,5 @@
-FROM node:16
+# 開発ステージ
+FROM node:16 AS development
 
 ENV TZ Asia/Tokyo
 
@@ -9,7 +10,15 @@ ENTRYPOINT ["/tini", "--"]
 
 USER node
 WORKDIR /app
-
 EXPOSE 3000
 
 CMD ["yarn", "dev"]
+
+# 本番ステージ
+FROM development AS production
+
+USER node
+ADD src .
+RUN yarn install
+
+CMD ["yarn", "start"]
