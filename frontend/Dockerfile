@@ -17,7 +17,7 @@ CMD ["yarn", "dev"]
 # ビルドステージ
 FROM development AS build
 COPY src .
-RUN --mount=type=secret,id=SECRETS,dst=/run/secrets/SECRETS . /run/secrets/SECRETS && \
+RUN --mount=type=secret,id=SECRETS,uid=1000 . /run/secrets/SECRETS && \
   yarn install && \
   yarn generate
 
