@@ -112,22 +112,25 @@ export default function TopPage() {
       );
 
       setHasError(false);
-    } catch {
+    } catch (e) {
+      console.error(e);
       setHasError(true);
     }
-
-    addSubmitToast(submitToast);
   };
 
   // 操作結果をトーストで表示
-  const submitToast = (
-    <CToast autohide color={hasError ? 'danger' : 'success'} animation>
-      <CToastHeader closeButton>
-        <strong className='me-auto'>操作結果</strong>
-      </CToastHeader>
-      <CToastBody>{hasError ? 'スケジュールの更新に失敗しました。' : 'スケジュールを更新しました。'}</CToastBody>
-    </CToast>
-  );
+  useEffect(() => {
+    if (hasError !== null) {
+      addSubmitToast(
+        <CToast autohide color={hasError ? 'danger' : 'success'} animation>
+          <CToastHeader closeButton>
+            <strong className='me-auto'>操作結果</strong>
+          </CToastHeader>
+          <CToastBody>{hasError ? 'スケジュールの更新に失敗しました。' : 'スケジュールを更新しました。'}</CToastBody>
+        </CToast>,
+      );
+    }
+  }, [hasError]);
 
   // cron式エディターを開いたときに初期値を埋める
   useEffect(() => {
@@ -338,7 +341,10 @@ export default function TopPage() {
                                   <CTableRow key={i}>
                                     <CTableDataCell>
                                       <CFormSelect
-                                        options={[{ label: 'サイレント', value: 'silent' }]}
+                                        options={[
+                                          { label: 'サイレント', value: 'silent' },
+                                          { label: 'スポット', value: 'spot' },
+                                        ]}
                                         value={reservation.type}
                                         onChange={(e) =>
                                           setReservations(

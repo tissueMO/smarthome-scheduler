@@ -54,6 +54,18 @@ class JobScheduler {
         start: new Date(options.start),
         end: new Date(options.end),
       }));
+    const spotReservations = reservations
+      .filter((reservation) => reservation.type === 'spot')
+      .map(({ options }, i) => {
+        console.info(`スポット予約 ${options.start} [${options.target}]`);
+        return options;
+      })
+      .map((options) => ({
+        ...options,
+        start: new Date(options.start),
+        end: new Date(options.end),
+        url: jobs.find((job) => job.title === options.target)?.url ?? '',
+      }));
 
     jobs
       .map((job, i) => {
@@ -92,6 +104,49 @@ class JobScheduler {
         job.start();
       });
 
+    // スポット予約用ジョブ
+    this.#jobs.push(
+      new CronJob('0 * * * * *', async () => {
+        const now = new Date();
+        const results = await Promise.allSettled(
+          spotReservations
+            .filter((reservation) => reservation.start <= now && now < reservation.end)
+            .map(({ target, url }) => {
+              console.info(`スポット予約 [${target}] トリガー`);
+              return axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
+            }),
+        );
+        results
+          .filter((result) => result.status === 'rejected')
+          .forEach(({ reason }) => console.error(`POST失敗: ${reason?.response?.status}`));
+      }),
+    );
+
+    return this;
+  }
+
+  reserve(type, options) {
+    if (type === 'silent') {
+      const { start, end, target } = options;
+      if (!start || !end || !target) {
+        console.info('サイレント予約: パラメーター不正');
+      } else {
+        this.#option.reservations.push({ type, options: { start, end, target } });
+      }
+      return this;
+    }
+
+    if (type === 'spot') {
+      const { start, end, target } = options;
+      if (!start || !end || !target) {
+        console.info('スポット予約: パラメーター不正');
+      } else {
+        this.#option.reservations.push({ type, options: { start, end, target } });
+      }
+      return this;
+    }
+
+    console.info(`予約: 該当タイプなし [${type}]`);
     return this;
   }
 
