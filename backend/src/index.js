@@ -39,10 +39,10 @@ express()
     try {
       const { user_id: userId, response_url: responseUrl, text } = req.body;
       await actions.reserveSilent({ userId, responseUrl, text, scheduler });
-      res.sendStatus(200);
+      res.status(200).end();
     } catch (e) {
       if (e instanceof TypeError) {
-        res.sendStatus(400);
+        res.status(400).end();
       }
     }
   })
@@ -52,10 +52,10 @@ express()
     try {
       const { user_id: userId, response_url: responseUrl, text } = req.body;
       await actions.reserveSpot({ userId, responseUrl, text, scheduler });
-      res.sendStatus(200);
+      res.status(200).end();
     } catch (e) {
       if (e instanceof TypeError) {
-        res.sendStatus(400);
+        res.status(400).end();
       }
     }
   })

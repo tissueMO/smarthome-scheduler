@@ -14,7 +14,7 @@ class JobScheduler {
   /**
    * @property {array[CronJob]}
    */
-  #jobs = [];
+  #cronJobs = [];
 
   async load() {
     try {
@@ -37,8 +37,8 @@ class JobScheduler {
   async start() {
     await this.load();
 
-    this.#jobs.forEach((job) => job.stop());
-    this.#jobs.splice();
+    this.#cronJobs.forEach((job) => job.stop());
+    this.#cronJobs.splice();
     console.info('スケジュールをクリアしました。');
 
     const { jobs, reservations } = this.#option;
@@ -100,26 +100,30 @@ class JobScheduler {
         });
       })
       .forEach((job) => {
-        this.#jobs.push(job);
+        this.#cronJobs.push(job);
         job.start();
       });
 
     // スポット予約用ジョブ
     const spotJob = new CronJob('0 * * * * *', async () => {
       const now = new Date();
+      const targets = spotReservations
+        .map((reservation, i) => ({ ...reservation, index: i }))
+        .filter((reservation) => reservation.start <= now && now < reservation.end);
       const results = await Promise.allSettled(
-        spotReservations
-          .filter((reservation) => reservation.start <= now && now < reservation.end)
-          .map(({ target, url }) => {
-            console.info(`スポット予約 [${target}] トリガー`);
-            return axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
-          }),
+        targets.map(({ target, url, index }) => {
+          console.info(`スポット予約#${index} [${target}] トリガー`);
+          return axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
+        }),
       );
       results
+        .map((result, i) => ({ ...result, index: i }))
         .filter((result) => result.status === 'rejected')
-        .forEach(({ reason }) => console.error(`POST失敗: ${reason?.response?.status}`));
+        .forEach(({ reason, index }) =>
+          console.error(`POST失敗#${index}: [${targets[index].target}] ${reason?.response?.status}`),
+        );
     });
-    this.#jobs.push(spotJob);
+    this.#cronJobs.push(spotJob);
     spotJob.start();
 
     return this;
@@ -128,26 +132,28 @@ class JobScheduler {
   reserve(type, options) {
     if (type === 'silent') {
       const { start, end, target } = options;
-      if (!start || !end || !target) {
+      if (!start || !end || !target || (target !== '*' && !this.#option.jobs.some((job) => job.title === target))) {
         console.info('サイレント予約: パラメーター不正');
+        throw new TypeError();
       } else {
         this.#option.reservations.push({ type, options: { start, end, target } });
+        return this;
       }
-      return this;
     }
 
     if (type === 'spot') {
       const { start, end, target } = options;
       if (!start || !end || !target) {
         console.info('スポット予約: パラメーター不正');
+        throw new TypeError();
       } else {
         this.#option.reservations.push({ type, options: { start, end, target } });
+        return this;
       }
-      return this;
     }
 
     console.info(`予約: 該当タイプなし [${type}]`);
-    return this;
+    throw new TypeError();
   }
 
   get schedules() {
