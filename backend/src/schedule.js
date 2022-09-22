@@ -143,7 +143,7 @@ class JobScheduler {
 
     if (type === 'spot') {
       const { start, end, target } = options;
-      if (!start || !end || !target) {
+      if (!start || !end || !target || !this.#option.jobs.some((job) => job.title === target)) {
         console.info('スポット予約: パラメーター不正');
         throw new TypeError();
       } else {

@@ -51,9 +51,9 @@ exports.reserveSilent = async ({ userId, responseUrl, text, scheduler }) => {
  */
 exports.reserveSpot = async ({ userId, responseUrl, text, scheduler }) => {
   // バリデーション
-  const [rawStart = '', target = '*'] = text.split(' ').filter((t) => t.length !== 0);
+  const [rawStart = '', target = ''] = text.split(' ').filter((t) => t.length !== 0);
   const start = new Date(rawStart);
-  if (Number.isNaN(start.valueOf())) {
+  if (Number.isNaN(start.valueOf()) || target.length === 0) {
     throw new TypeError();
   }
 
