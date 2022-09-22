@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dayjs = require('dayjs');
+const axios = require('axios').default;
 const { JobScheduler } = require('./schedule');
 
 dayjs.extend(require('dayjs/plugin/timezone'));
@@ -57,12 +58,14 @@ express()
     const formatEnd = dayjs.tz(end).format(timeFormat);
     if (type === 'silent') {
       reservationName = 'サイレント予約';
-      const schedule = scheduler.schedules;
-      schedule.reservations.push({
+      const schedules = scheduler.schedules;
+      schedules.reservations.push({
         start: formatStart,
         end: formatEnd,
         target,
       });
+      scheduler.schedules = schedules;
+      await scheduler.save();
     }
 
     // Slack API (Slash Commands) 準拠のレスポンス
