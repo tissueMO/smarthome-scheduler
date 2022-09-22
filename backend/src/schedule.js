@@ -105,22 +105,22 @@ class JobScheduler {
       });
 
     // スポット予約用ジョブ
-    this.#jobs.push(
-      new CronJob('0 * * * * *', async () => {
-        const now = new Date();
-        const results = await Promise.allSettled(
-          spotReservations
-            .filter((reservation) => reservation.start <= now && now < reservation.end)
-            .map(({ target, url }) => {
-              console.info(`スポット予約 [${target}] トリガー`);
-              return axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
-            }),
-        );
-        results
-          .filter((result) => result.status === 'rejected')
-          .forEach(({ reason }) => console.error(`POST失敗: ${reason?.response?.status}`));
-      }),
-    );
+    const spotJob = new CronJob('0 * * * * *', async () => {
+      const now = new Date();
+      const results = await Promise.allSettled(
+        spotReservations
+          .filter((reservation) => reservation.start <= now && now < reservation.end)
+          .map(({ target, url }) => {
+            console.info(`スポット予約 [${target}] トリガー`);
+            return axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
+          }),
+      );
+      results
+        .filter((result) => result.status === 'rejected')
+        .forEach(({ reason }) => console.error(`POST失敗: ${reason?.response?.status}`));
+    });
+    this.#jobs.push(spotJob);
+    spotJob.start();
 
     return this;
   }

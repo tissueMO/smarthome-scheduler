@@ -27,7 +27,7 @@ exports.reserveSilent = async ({ userId, responseUrl, text, scheduler }) => {
   // 予約追加
   const formatStart = dayjs.tz(start).format(timeFormat);
   const formatEnd = dayjs.tz(end).format(timeFormat);
-  scheduler.reserve('spot', {
+  scheduler.reserve('silent', {
     start: formatStart,
     end: formatEnd,
     target,
