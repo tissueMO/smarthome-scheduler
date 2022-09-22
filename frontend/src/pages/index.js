@@ -129,6 +129,7 @@ export default function TopPage() {
           <CToastBody>{hasError ? 'スケジュールの更新に失敗しました。' : 'スケジュールを更新しました。'}</CToastBody>
         </CToast>,
       );
+      setHasError(null);
     }
   }, [hasError]);
 
