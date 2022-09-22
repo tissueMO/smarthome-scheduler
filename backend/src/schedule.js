@@ -57,7 +57,7 @@ class JobScheduler {
     const spotReservations = reservations
       .filter((reservation) => reservation.type === 'spot')
       .map(({ options }, i) => {
-        console.info(`スポット予約 ${options.start} [${options.target}]`);
+        console.info(`スポット予約#${i + 1} [${options.target}] ${options.start}`);
         return options;
       })
       .map((options) => ({
@@ -112,7 +112,7 @@ class JobScheduler {
         .filter((reservation) => reservation.start <= now && now < reservation.end);
       const results = await Promise.allSettled(
         targets.map(({ target, url, index }) => {
-          console.info(`スポット予約#${index} [${target}] トリガー`);
+          console.info(`スポット予約#${index + 1} [${target}] トリガー`);
           return axios.post(url, {}, { headers: { 'Content-Type': 'application/json' } });
         }),
       );
@@ -120,7 +120,7 @@ class JobScheduler {
         .map((result, i) => ({ ...result, index: i }))
         .filter((result) => result.status === 'rejected')
         .forEach(({ reason, index }) =>
-          console.error(`POST失敗#${index}: [${targets[index].target}] ${reason?.response?.status}`),
+          console.error(`POST失敗: [${targets[index].target}] ${reason?.response?.status}`),
         );
     });
     this.#cronJobs.push(spotJob);
