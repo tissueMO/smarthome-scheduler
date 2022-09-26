@@ -54,6 +54,7 @@ class JobScheduler {
         start: new Date(options.start),
         end: new Date(options.end),
       }));
+
     const spotReservations = reservations
       .filter((reservation) => reservation.type === 'spot')
       .map(({ options }, i) => {
@@ -75,7 +76,7 @@ class JobScheduler {
       .map(({ cronExpression, url, title }, i) => {
         const hasHolidayCondition = cronExpression.match(/\$$/g) !== null;
         const hasNotHolidayCondition = cronExpression.match(/#$/g) !== null;
-        cronExpression = '20 ' + cronExpression.replace('$', '*').replace('#', '*');
+        cronExpression = `0 ${cronExpression.replace('$', '*').replace('#', '*')}`;
 
         return new CronJob(cronExpression, async () => {
           if (hasHolidayCondition && !this.#isHoliday()) {
