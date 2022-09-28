@@ -185,16 +185,16 @@ export default function TopPage() {
                         </CNav>
                         <CTabContent className='p-3 pt-5'>
                           <CTabPane visible={activeTab === 0}>
-                            <CTable>
+                            <CTable responsive striped hover>
                               <CTableHead>
                                 <CTableRow>
-                                  <CTableHeaderCell scope='col' className='p-2'>
+                                  <CTableHeaderCell scope='col' className='p-2 w-25'>
                                     タイトル
                                   </CTableHeaderCell>
                                   <CTableHeaderCell scope='col' className='p-2'>
                                     cron 式
                                   </CTableHeaderCell>
-                                  <CTableHeaderCell scope='col' className='p-2'>
+                                  <CTableHeaderCell scope='col' className='p-2 w-50'>
                                     アクション URL
                                   </CTableHeaderCell>
                                   <CTableHeaderCell scope='col' className='p-2'>
@@ -317,7 +317,7 @@ export default function TopPage() {
                             </CTable>
                           </CTabPane>
                           <CTabPane visible={activeTab === 1}>
-                            <CTable>
+                            <CTable responsive striped hover>
                               <CTableHead>
                                 <CTableRow>
                                   <CTableHeaderCell scope='col' className='p-2'>
@@ -329,7 +329,7 @@ export default function TopPage() {
                                   <CTableHeaderCell scope='col' className='p-2'>
                                     終了
                                   </CTableHeaderCell>
-                                  <CTableHeaderCell scope='col' className='p-2 w-25'>
+                                  <CTableHeaderCell scope='col' className='p-2 w-50'>
                                     対象
                                   </CTableHeaderCell>
                                   <CTableHeaderCell scope='col' className='p-2'>

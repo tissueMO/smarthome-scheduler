@@ -47,3 +47,9 @@ button {
     }
   }
 }
+
+table {
+  th:not(:last-child), td:not(:last-child) {
+    min-width: 200px;
+  }
+}
