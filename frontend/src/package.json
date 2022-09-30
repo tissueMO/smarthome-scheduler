@@ -1,6 +1,8 @@
 {
   "name": "smarthome-scheduler-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "author": "tissueMO",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",
