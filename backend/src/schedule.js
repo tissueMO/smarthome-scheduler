@@ -70,9 +70,10 @@ class JobScheduler {
 
     jobs
       .map((job, i) => {
-        console.info(`ジョブ#${i + 1} [${job.title}] ${job.cronExpression}`);
+        console.info(`ジョブ#${i + 1} [${job.title}] ${job.cronExpression || '(スケジュールなし)'}`);
         return job;
       })
+      .filter(({ cronExpression }) => cronExpression)
       .map(({ cronExpression, url, title }, i) => {
         const hasHolidayCondition = cronExpression.match(/\$$/g) !== null;
         const hasNotHolidayCondition = cronExpression.match(/#$/g) !== null;
