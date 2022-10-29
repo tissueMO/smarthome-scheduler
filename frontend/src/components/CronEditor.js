@@ -64,7 +64,7 @@ export default function CronEditor({ visible, cronExpression = '* * * * *', onCl
             <CFormInput
               value={dayOfWeeks}
               type='text'
-              placeholder='0-6 (日曜日-土曜日), $=土日祝, #=土日祝以外'
+              placeholder='0-6 (日-土), $=土日祝, #=土日祝以外, @=祝日以外'
               onInput={(e) => setDayOfWeeks(e.target.value)}
             />
           </CCol>

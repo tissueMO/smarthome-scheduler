@@ -76,7 +76,8 @@ class JobScheduler {
       .map(({ cronExpression, url, title }, i) => {
         const hasHolidayCondition = cronExpression.match(/\$$/g) !== null;
         const hasNotHolidayCondition = cronExpression.match(/#$/g) !== null;
-        cronExpression = `0 ${cronExpression.replace('$', '*').replace('#', '*')}`;
+        const hasNotPublicHolidayCondition = cronExpression.match(/@/g) !== null;
+        cronExpression = `0 ${cronExpression.replace(/\$/g, '*').replace(/#/g, '*').replace(/@/g, '')}`;
 
         return new CronJob(cronExpression, async () => {
           if (hasHolidayCondition && !this.#isHoliday()) {
@@ -85,6 +86,10 @@ class JobScheduler {
           }
           if (hasNotHolidayCondition && this.#isHoliday()) {
             console.info(`ジョブ#${i + 1} [${title}] スキップ (平日制約)`);
+            return;
+          }
+          if (hasNotPublicHolidayCondition && this.#isPublicHoliday()) {
+            console.info(`ジョブ#${i + 1} [${title}] スキップ (非祝日制約)`);
             return;
           }
           if (this.#containsInSilentReservations(silentReservations, title)) {
@@ -192,6 +197,10 @@ class JobScheduler {
   #isHoliday(date = null) {
     const d = date ?? new Date();
     return [0, 6].includes(d.getDay()) || holidayJp.isHoliday(d);
+  }
+
+  #isPublicHoliday(date = null) {
+    return holidayJp.isHoliday(date ?? new Date());
   }
 }
 
