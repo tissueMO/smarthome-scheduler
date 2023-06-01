@@ -64,6 +64,7 @@ jobs:
         run: |
           touch .env
           echo "export NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+          echo "export BASE_DIR=${{ secrets.BASE_DIR }}" >> .env
 
       - name: Build and Push
         uses: docker/build-push-action@v3
