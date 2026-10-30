@@ -1,5 +1,5 @@
 # 開発ステージ
-FROM node:16 AS development
+FROM node:24-slim AS development
 
 ENV TZ Asia/Tokyo
 
