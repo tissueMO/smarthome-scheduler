@@ -83,8 +83,11 @@ jobs:
       - build-backend
     steps:
       - name: Trigger Webhooks
+        env:
+          BACKEND_WEBHOOK_URL: ${{ secrets.BACKEND_WEBHOOK_URL }}
         run: |
-          curl -X POST -H 'Content-Type: application-json' ${{ secrets.BACKEND_WEBHOOK_URL }}
+          curl --fail-with-body --silent --show-error --request POST \
+            --header 'Content-Type: application/json' "$BACKEND_WEBHOOK_URL"
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -92,5 +95,8 @@ jobs:
       - build-frontend
     steps:
       - name: Trigger Webhooks
+        env:
+          FRONTEND_WEBHOOK_URL: ${{ secrets.FRONTEND_WEBHOOK_URL }}
         run: |
-          curl -X POST -H 'Content-Type: application-json' ${{ secrets.FRONTEND_WEBHOOK_URL }}
+          curl --fail-with-body --silent --show-error --request POST \
+            --header 'Content-Type: application/json' "$FRONTEND_WEBHOOK_URL"
